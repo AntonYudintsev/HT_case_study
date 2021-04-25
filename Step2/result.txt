@@ -1,0 +1,9 @@
+inserts; hits; misses;(ins) probes cnt;(ins) avg probes cnt;(ins) ticks;(ins) avg ticks;(hit) probes cnt;(hit) avg probes cnt;(hit) ticks;(hit) avg ticks;(mis) probes cnt;(mis) avg probes cnt;(mis) ticks;(mis) avg ticks;
+
+OA_Simple capacity=16384 (kinda)memory=1179648 loadFactor = 0.899963
+14745; 14745; 0; 75440; 5.116311; 2643628; 179.289793; 75440; 5.116311; 1792882; 121.592540; 628254; 42.607933; 4313350; 292.529671
+OA_Simple ticks: INS 2643628; HIT 1792882; MIS: 4313350
+
+SC_Struct capacity=16384 (kinda)memory=1245184 loadFactor = 0.899963
+14745; 14745; 0; 21225; 1.439471; 2265836; 153.668091; 21225; 1.439471; 1291614; 87.596745; 28157; 1.909596; 1206750; 81.841302
+SC_Struct ticks: INS 2265836; HIT 1291614; MIS: 1206750
