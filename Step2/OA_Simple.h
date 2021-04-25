@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "common.h"
 struct OA_Simple
 {
@@ -57,23 +57,23 @@ struct OA_Simple
       int hashCode = get_hash(key) & OnlyPositiveNumbersMask;
       int location = hashCode % Capacity;
 
-      do {
-          loop:;
-          if (entries[location].hashCode == EntryEmpty)
-          {
-              entries[location].hashCode = hashCode;
-              entries[location].key = key;
-              entries[location].value = value;
-              Count++;
-              return Okey;
-          }
-          else if (entries[location].hashCode == hashCode && entries[location].key == key)
-          {
-              return DublicateKey;
-          }
-      } while (++location != Capacity);
-      location = 0;
-      goto loop;//'so sue me', it is simpler code
+      for(;;) {
+          do {
+              if (entries[location].hashCode == EntryEmpty)
+              {
+                  entries[location].hashCode = hashCode;
+                  entries[location].key = key;
+                  entries[location].value = value;
+                  Count++;
+                  return Okey;
+              }
+              else if (entries[location].hashCode == hashCode && entries[location].key == key)
+              {
+                  return DublicateKey;
+              }
+          } while (++location != Capacity);
+          location = 0;
+      }
   }
 
   ResultItem InsertProbe(string key, string value)
@@ -88,26 +88,26 @@ struct OA_Simple
       int hashCode = get_hash(key) & OnlyPositiveNumbersMask;
       int location = hashCode % Capacity;
 
-      do {
-          loop:;
-          result.Probe++;
-          if (entries[location].hashCode == EntryEmpty)
-          {
-              entries[location].hashCode = hashCode;
-              entries[location].key = key;
-              entries[location].value = value;
-              Count++;
-              result.Result = Okey;
-              return result;
-          }
-          else if (entries[location].hashCode == hashCode && entries[location].key == key)
-          {
-              result.Result = DublicateKey;
-              return result;
-          }
-      } while (++location != Capacity);
-      location = 0;
-      goto loop;//'so sue me', it is simpler code
+      for(;;) {
+          do {
+              result.Probe++;
+              if (entries[location].hashCode == EntryEmpty)
+              {
+                  entries[location].hashCode = hashCode;
+                  entries[location].key = key;
+                  entries[location].value = value;
+                  Count++;
+                  result.Result = Okey;
+                  return result;
+              }
+              else if (entries[location].hashCode == hashCode && entries[location].key == key)
+              {
+                  result.Result = DublicateKey;
+                  return result;
+              }
+          } while (++location != Capacity);
+          location = 0;
+      }
   }
 
   ResultType Search(const string &key)
@@ -115,15 +115,15 @@ struct OA_Simple
       int hashCode = get_hash(key) & OnlyPositiveNumbersMask;
       int location = hashCode % Capacity;
 
-      do {
-          loop:;
-          if (entries[location].hashCode == EntryEmpty)
-            return NotFound;
-          if (entries[location].hashCode == hashCode && entries[location].key == key)
-              return Okey;
-      } while (++location != Capacity);
-      location = 0;
-      goto loop;//'so sue me', it is simpler code
+      for(;;) {
+          do {
+              if (entries[location].hashCode == EntryEmpty)
+                return NotFound;
+              if (entries[location].hashCode == hashCode && entries[location].key == key)
+                  return Okey;
+          } while (++location != Capacity);
+          location = 0;
+      }
   }
   ResultItem SearchProbe(const string &key)
   {
@@ -131,21 +131,21 @@ struct OA_Simple
       int hashCode = get_hash(key) & OnlyPositiveNumbersMask;
       int location = hashCode % Capacity;
 
-      do {
-          loop:;
-          result.Probe++;
-          if (entries[location].hashCode == EntryEmpty)
-          {
-              result.Result = NotFound;
-              return result;
-          }
-          if (entries[location].hashCode == hashCode && entries[location].key == key)
-          {
-              result.Result = Okey;
-              return result;
-          }
-      } while (++location != Capacity);
-      location = 0;
-      goto loop;//'so sue me', it is simpler code
+      for(;;) {
+          do {
+              result.Probe++;
+              if (entries[location].hashCode == EntryEmpty)
+              {
+                  result.Result = NotFound;
+                  return result;
+              }
+              if (entries[location].hashCode == hashCode && entries[location].key == key)
+              {
+                  result.Result = Okey;
+                  return result;
+              }
+          } while (++location != Capacity);
+          location = 0;
+      }
   }
 };

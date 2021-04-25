@@ -36,35 +36,35 @@ struct OA_Simple
 
       uint32_t hashCode = get_hash(key);
       uint32_t location = hashCode % Capacity;
-      do {
-          loop:;
-          if (hashes[location] == EntryEmpty)
-          {
-              hashes[location] = hashCode;
-              keys[location] = key;
-              vals[location] = value;
-              Count++;
-              return Okey;
-          }
-          else if (hashes[location] == hashCode && keys[location] == key)
-              return DublicateKey;
-      } while (++location != Capacity);
-      location = 0;
-      goto loop;//'so sue me', it is simpler code
+      for(;;) {
+          do {
+              if (hashes[location] == EntryEmpty)
+              {
+                  hashes[location] = hashCode;
+                  keys[location] = key;
+                  vals[location] = value;
+                  Count++;
+                  return Okey;
+              }
+              else if (hashes[location] == hashCode && keys[location] == key)
+                  return DublicateKey;
+          } while (++location != Capacity);
+          location = 0;
+      }
   }
   ResultType Search(const string &key)
   {
       uint32_t hashCode = get_hash(key);
       uint32_t location = hashCode % Capacity;
-      do {
-          loop:;
-          uint32_t hash = hashes[location];
-          if (hash == EntryEmpty)
-            return NotFound;
-          if (hash == hashCode && keys[location] == key)
-             return Okey;
-      } while (++location != Capacity);
-      location = 0;
-      goto loop;//'so sue me', it is simpler code
+      for(;;) {
+          do {
+              uint32_t hash = hashes[location];
+              if (hash == EntryEmpty)
+                return NotFound;
+              if (hash == hashCode && keys[location] == key)
+                 return Okey;
+          } while (++location != Capacity);
+          location = 0;
+      }
   }
 };

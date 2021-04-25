@@ -13,15 +13,16 @@ struct OA_Simple
   }
 
   static const char* Name(){return "OA_Simple";}
-  uint32_t Capacity = 0, Count = 0;
   unique_ptr<hash_t[]> hashes;
   unique_ptr<key_t[]> keys;
   unique_ptr<val_t[]> vals;
+  uint32_t Count = 0;
+  uint32_t Capacity = 0;
   static const uint32_t EntrySize = sizeof(val_t) + sizeof(val_t) + sizeof(hash_t);
 
   OA_Simple(uint32_t size)
   {
-    Capacity = size;
+    Capacity = size; // HtHelper.GetPrime(size);
     keys = make_unique<key_t[]>(Capacity);
     vals = make_unique<val_t[]>(Capacity);
     hashes = make_unique<uint32_t[]>(Capacity);
@@ -40,23 +41,23 @@ struct OA_Simple
       uint32_t hashCode = get_hash(key);
       uint32_t location = hashCode % Capacity;
 
-      do {
-          loop:;
-          if (hashes[location] == EntryEmpty)
-          {
-              hashes[location] = hashCode;
-              keys[location] = key;
-              vals[location] = value;
-              Count++;
-              return Okey;
-          }
-          else if (hashes[location] == hashCode && keys[location] == key)
-          {
-              return DublicateKey;
-          }
-      } while (++location != Capacity);
-      location = 0;
-      goto loop;//'so sue me', it is simpler code
+      for(;;) {
+          do {
+              if (hashes[location] == EntryEmpty)
+              {
+                  hashes[location] = hashCode;
+                  keys[location] = key;
+                  vals[location] = value;
+                  Count++;
+                  return Okey;
+              }
+              else if (hashes[location] == hashCode && keys[location] == key)
+              {
+                  return DublicateKey;
+              }
+          } while (++location != Capacity);
+          location = 0;
+      }
   }
 
   ResultItem InsertProbe(const string &key, const string &value)
@@ -71,45 +72,45 @@ struct OA_Simple
       uint32_t hashCode = get_hash(key);
       uint32_t location = hashCode % Capacity;
 
-      do {
-          loop:;
-          result.Probe++;
-          if (hashes[location] == EntryEmpty)
-          {
-              hashes[location] = hashCode;
-              keys[location] = key;
-              vals[location] = value;
-              Count++;
-              result.Result = Okey;
-              return result;
-          }
-          else if (hashes[location] == hashCode && keys[location] == key)
-          {
-              result.Result = DublicateKey;
-              return result;
-          }
-      } while (++location != Capacity);
-      location = 0;
-      goto loop;//'so sue me', it is simpler code
+      for(;;) {
+          do {
+              result.Probe++;
+              if (hashes[location] == EntryEmpty)
+              {
+                  hashes[location] = hashCode;
+                  keys[location] = key;
+                  vals[location] = value;
+                  Count++;
+                  result.Result = Okey;
+                  return result;
+              }
+              else if (hashes[location] == hashCode && keys[location] == key)
+              {
+                  result.Result = DublicateKey;
+                  return result;
+              }
+          } while (++location != Capacity);
+          location = 0;
+      }
   }
 
   ResultType Search(const string &key)
   {
       uint32_t hashCode = get_hash(key);
-      uint32_t location = hashCode & (Capacity-1);
+      uint32_t location = hashCode % Capacity;
 
-      do {
-          loop:;
-          uint32_t hash = hashes[location];
-          if (hash == EntryEmpty)
-            return NotFound;
-          if (hash == hashCode && keys[location] == key)
-          {
-             return Okey;
-          }
-      } while (++location != Capacity);
-      location = 0;
-      goto loop;//'so sue me', it is simpler code
+      for(;;) {
+          do {
+              uint32_t hash = hashes[location];
+              if (hash == EntryEmpty)
+                return NotFound;
+              if (hash == hashCode && keys[location] == key)
+              {
+                 return Okey;
+              }
+          } while (++location != Capacity);
+          location = 0;
+      }
   }
 
   ResultItem SearchProbe(const string &key)
@@ -118,21 +119,21 @@ struct OA_Simple
       uint32_t hashCode = get_hash(key);
       uint32_t location = hashCode % Capacity;
 
-      do {
-          loop:;
-          result.Probe++;
-          if (hashes[location] == EntryEmpty)
-          {
-              result.Result = NotFound;
-              return result;
-          }
-          if (hashes[location] == hashCode && keys[location] == key)
-          {
-              result.Result = Okey;
-              return result;
-          }
-      } while (++location != Capacity);
-      location = 0;
-      goto loop;//'so sue me', it is simpler code
+      for(;;) {
+          do {
+              result.Probe++;
+              if (hashes[location] == EntryEmpty)
+              {
+                  result.Result = NotFound;
+                  return result;
+              }
+              if (hashes[location] == hashCode && keys[location] == key)
+              {
+                  result.Result = Okey;
+                  return result;
+              }
+          } while (++location != Capacity);
+          location = 0;
+      }
   }
 };
